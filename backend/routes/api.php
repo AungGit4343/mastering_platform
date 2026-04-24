@@ -33,4 +33,7 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
 
     // Admin updates user password and points
     Route::put('/users/{id}', [AdminController::class, 'updateUser']);
+
+    // Audio Submit 
+    Route::post('/jobs/{id}/submit', [JobController::class, 'submit']);
 });

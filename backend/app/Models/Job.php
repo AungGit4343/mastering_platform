@@ -14,6 +14,8 @@ class Job extends Model
         'client_id',
         'engineer_id',
         'status',
+        'audio_path',
+        'submission_path'
     ];
 
     // Job belongs to client/user who posted it

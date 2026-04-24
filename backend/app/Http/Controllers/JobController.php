@@ -26,6 +26,7 @@ class JobController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'reward' => 'required|integer|min:1',
+            'audio' => 'required|file|mimes:mp3,wav|max:10240'
         ]);
 
         return Job::create([
@@ -33,6 +34,7 @@ class JobController extends Controller
             'description' => $request->description,
             'reward' => $request->reward,
             'client_id' => Auth::id(),
+            'audio_path' => $path,
             'status' => 'open',
         ]);
     }
@@ -130,5 +132,33 @@ class JobController extends Controller
             ->with('client:id,name,email')
             ->latest()
             ->get();
+    }
+
+    //Audio File Submission
+    public function submit($id, Request $request)
+{
+        $job = Job::findOrFail($id);
+
+        if ($job->engineer_id !== auth()->id()) {
+            return response()->json(['message' => 'Not authorized'], 403);
+        }
+
+        if ($job->status !== 'in_progress') {
+            return response()->json(['message' => 'Job not in progress'], 400);
+        }
+
+        $request->validate([
+            'audio' => 'required|file|mimes:mp3,wav|max:10240'
+        ]);
+
+        $path = $request->file('audio')->store('submissions', 'public');
+
+        $job->submission_path = $path;
+        $job->save();
+
+        return response()->json([
+            'message' => 'Audio submitted',
+            'job' => $job
+        ]);
     }
 }
