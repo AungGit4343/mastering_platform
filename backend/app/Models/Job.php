@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 
 class Job extends Model
 {
+    // Fields allowed for mass assignment
     protected $fillable = [
         'title',
         'description',
@@ -16,13 +16,13 @@ class Job extends Model
         'status',
     ];
 
-    // 👇 The user who created the job
+    // Job belongs to client/user who posted it
     public function client()
     {
         return $this->belongsTo(User::class, 'client_id');
     }
 
-    // 👇 The user who takes the job
+    // Job belongs to engineer/user who accepted it
     public function engineer()
     {
         return $this->belongsTo(User::class, 'engineer_id');

@@ -8,8 +8,16 @@ function Login() {
   const login = async () => {
     try {
       const res = await api.post("/login", { email, password });
+
       localStorage.setItem("token", res.data.token);
-      window.location.href = "/dashboard";
+      localStorage.setItem("is_admin", res.data.user.is_admin ? "true" : "false");
+      localStorage.setItem("user_name", res.data.user.name);
+
+      if (res.data.user.is_admin) {
+        window.location.href = "/admin";
+      } else {
+        window.location.href = "/dashboard";
+      }
     } catch (err) {
       console.error(err);
       alert("Login failed");
