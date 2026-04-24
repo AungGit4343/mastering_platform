@@ -26,7 +26,7 @@ class JobController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'reward' => 'required|integer|min:1',
-            'audio' => 'required|file|mimes:mp3,wav|max:10240'
+            'audio' => 'required|file|mimes:mp3,wav|max:102400'
         ]);
 
         return Job::create([

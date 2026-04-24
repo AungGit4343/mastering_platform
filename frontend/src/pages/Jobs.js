@@ -28,6 +28,7 @@ function Jobs() {
     } catch (err) {
       alert(err.response?.data?.message || "Failed to accept job");
     }
+    
   };
 
   return (
@@ -50,6 +51,9 @@ function Jobs() {
           <button onClick={() => acceptJob(job.id)}>
             Accept Job
           </button>
+          
+          <audio controls src={`http://localhost:8000/storage/${job.audio_path}`} />
+        
         </div>
       ))}
     </div>

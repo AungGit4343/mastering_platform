@@ -5,7 +5,8 @@ import api from "../api";
 function MyJobs() {
   const [postedJobs, setPostedJobs] = useState([]);
   const [acceptedJobs, setAcceptedJobs] = useState([]);
-
+  const [submissionFile, setSubmissionFile] = useState(null);
+  
   // Load jobs created and accepted by logged-in user
   const loadMyJobs = async () => {
     try {
@@ -19,6 +20,22 @@ function MyJobs() {
       alert("Failed to load my jobs");
     }
   };
+
+  //Submit Audio
+  const submitAudio = async (id) => {
+  const formData = new FormData();
+  formData.append("audio", submissionFile);
+
+  try {
+    await api.post(`/jobs/${id}/submit`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    alert("Submitted!");
+  } catch (err) {
+    alert("Submission failed");
+  }
+};
 
   useEffect(() => {
     loadMyJobs();
@@ -56,6 +73,7 @@ function MyJobs() {
             <p>You have not posted any jobs yet.</p>
           </div>
         )}
+        
 
         {postedJobs.map((job) => (
           <div className="card" key={job.id}>
@@ -75,12 +93,31 @@ function MyJobs() {
               <strong>Engineer:</strong>{" "}
               {job.engineer ? job.engineer.name : "Not accepted yet"}
             </p>
+            
+            {/*Submit mp3 or wav*/}
+            <p className="small">
+              Submit one completed audio file (MP3 or WAV)
+            </p>
+
+            <input
+              type="file"
+              accept=".mp3,.wav,audio/mpeg,audio/wav"
+              onChange={(e) => setSubmissionFile(e.target.files[0])}
+            />
 
             {job.status === "in_progress" && (
               <button onClick={() => completeJob(job.id)}>
                 Mark Complete & Transfer Points
               </button>
             )}
+
+            {job.submission_path && (
+              <>
+                <p>Submitted Audio:</p>
+                <audio controls src={`http://localhost:8000/storage/${job.submission_path}`} />
+              </>
+            )}
+            
           </div>
         ))}
       </section>
@@ -115,6 +152,15 @@ function MyJobs() {
               <p className="small">
                 Waiting for client to mark this job as complete.
               </p>
+            )}
+
+            {job.status === "in_progress" && (
+              <>
+                <input type="file" onChange={e => setSubmissionFile(e.target.files[0])} />
+                <button onClick={() => submitAudio(job.id)}>
+                  Submit Work
+                </button>
+              </>
             )}
 
             {job.status === "completed" && (
