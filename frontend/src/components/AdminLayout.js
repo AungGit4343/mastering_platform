@@ -14,7 +14,7 @@ function AdminLayout({ children }) {
     <div className="admin-layout">
       {/* Sidebar */}
       <aside className="admin-sidebar">
-        <h2 className="admin-logo">AudioMarket Admin</h2>
+        <h2 className="admin-logo">SecondEars Admin</h2>
 
         <nav className="admin-menu">
           <Link to="/admin">Dashboard</Link>

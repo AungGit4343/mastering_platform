@@ -6,6 +6,14 @@ function Dashboard() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
+
+     const isAdmin = localStorage.getItem("is_admin") === "true";
+
+    if (isAdmin) {
+      window.location.href = "/admin";
+      return;
+    }
+    
     api.get("/me")
       .then((res) => setUser(res.data))
       .catch((err) => {

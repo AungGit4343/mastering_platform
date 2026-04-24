@@ -16,7 +16,7 @@ function Navbar() {
   return (
     <div className="navbar">
       <div className="nav-left">
-        <h2 className="brand">AudioMarket</h2>
+        <h2 className="brand">SecondEars</h2>
       </div>
 
       <div className="nav-right">
@@ -42,11 +42,12 @@ function Navbar() {
           </>
         )}
 
-        {/* Admin does not use normal dashboard */}
+        {/* Admin  Navidation */}
         {token && isAdmin && (
           <>
             <Link to="/admin">Admin Panel</Link>
-
+            <Link to="/admin/users">Users</Link>
+            <Link to="/admin/jobs">Jobs</Link>
             <button className="logout-btn" onClick={logout}>
               Logout
             </button>

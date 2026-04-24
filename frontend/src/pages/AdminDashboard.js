@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api";
+import AdminLayout from "../components/AdminLayout";
 
 function AdminDashboard() {
   const [stats, setStats] = useState(null);
@@ -23,48 +24,29 @@ function AdminDashboard() {
   }
 
   return (
-    <div className="container">
+        <AdminLayout>
       <h1>Admin Dashboard</h1>
 
       <div className="stats-grid">
-        <div className="stat-card">
-          <h3>Total Users</h3>
-          <p>{stats.total_users}</p>
-        </div>
-
-        <div className="stat-card">
-          <h3>Total Jobs</h3>
-          <p>{stats.total_jobs}</p>
-        </div>
-
-        <div className="stat-card">
-          <h3>Completed Jobs</h3>
-          <p>{stats.completed_jobs}</p>
-        </div>
-
-        <div className="stat-card">
-          <h3>Open Jobs</h3>
-          <p>{stats.open_jobs}</p>
-        </div>
-
-        <div className="stat-card">
-          <h3>Total Points</h3>
-          <p>{stats.total_points}</p>
-        </div>
+        <div className="stat-card"><h3>Total Users</h3><p>{stats.total_users}</p></div>
+        <div className="stat-card"><h3>Total Jobs</h3><p>{stats.total_jobs}</p></div>
+        <div className="stat-card"><h3>Completed Jobs</h3><p>{stats.completed_jobs}</p></div>
+        <div className="stat-card"><h3>Open Jobs</h3><p>{stats.open_jobs}</p></div>
+        <div className="stat-card"><h3>Total Points</h3><p>{stats.total_points}</p></div>
       </div>
 
       <div className="dashboard-actions">
         <Link to="/admin/users" className="dashboard-link-card">
           <h3>Manage Users</h3>
-          <p>View users, points, and admin status.</p>
+          <p>View users and points.</p>
         </Link>
 
         <Link to="/admin/jobs" className="dashboard-link-card">
           <h3>Manage Jobs</h3>
-          <p>View and remove jobs when needed.</p>
+          <p>View and remove jobs.</p>
         </Link>
       </div>
-    </div>
+    </AdminLayout>   
   );
 }
 
