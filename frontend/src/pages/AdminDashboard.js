@@ -38,7 +38,7 @@ function AdminDashboard() {
       <div className="dashboard-actions">
         <Link to="/admin/users" className="dashboard-link-card">
           <h3>Manage Users</h3>
-          <p>View users and points.</p>
+          <p>View and Edit users and points.</p>
         </Link>
 
         <Link to="/admin/jobs" className="dashboard-link-card">

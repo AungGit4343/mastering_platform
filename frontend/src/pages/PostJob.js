@@ -23,6 +23,7 @@ function PostJob() {
       });
 
       alert("Job posted!");
+      window.location.href = "/my-jobs";
     } catch (err) {
       console.error(err);
       alert("Failed to post job");

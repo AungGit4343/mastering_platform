@@ -32,6 +32,14 @@ function MyJobs() {
     });
 
     alert("Submitted!");
+
+    // Refresh job lists to reflect submission
+      setAcceptedJobs((prevJobs) =>
+      prevJobs.filter((job) => job.id !== id)
+    );
+
+    setSubmissionFile(null);
+
   } catch (err) {
     alert("Submission failed");
   }
@@ -40,6 +48,19 @@ function MyJobs() {
   useEffect(() => {
     loadMyJobs();
   }, []);
+
+  //Delete Job
+  const deleteJob = async (id) => {
+  if (!window.confirm("Are you sure you want to delete this job?")) return;
+
+  try {
+    await api.delete(`/jobs/${id}`);
+    alert("Job deleted");
+    loadMyJobs();
+  } catch (err) {
+    alert(err.response?.data?.message || "Delete failed");
+  }
+};
 
   // Client marks job complete and transfers points
   const completeJob = async (id) => {
@@ -104,7 +125,15 @@ function MyJobs() {
               accept=".mp3,.wav,audio/mpeg,audio/wav"
               onChange={(e) => setSubmissionFile(e.target.files[0])}
             />
-
+            
+            {job.status === "open" && (
+              <button
+                style={{ background: "#ef4444" }}
+                onClick={() => deleteJob(job.id)}
+              >
+                Delete Job
+              </button>
+            )}
             {job.status === "in_progress" && (
               <button onClick={() => completeJob(job.id)}>
                 Mark Complete & Transfer Points
