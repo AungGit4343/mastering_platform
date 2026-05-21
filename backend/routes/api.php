@@ -19,7 +19,8 @@ Route::get('/users/{id}/public-profile', [ReviewController::class, 'publicProfil
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::put('/profile', [AuthController::class, 'updateProfile']);
-
+    Route::put('/jobs/{id}/extend-deadline', [JobController::class, 'extendDeadline']);
+    
     // Job routes
     Route::get('/jobs', [JobController::class, 'index']);
     Route::post('/jobs', [JobController::class, 'store']);

@@ -100,6 +100,40 @@ function MyJobs() {
     return "";
   };
 
+  // Check if job deadline has passed
+
+  const isDeadlinePassed = (deadline) => {
+    if (!deadline) return false;
+
+    const today = new Date();
+    const deadlineDate = new Date(deadline);
+
+    today.setHours(0, 0, 0, 0);
+    deadlineDate.setHours(0, 0, 0, 0);
+
+    return deadlineDate < today;
+  };
+
+  // ========================================
+  // Extend deadline for a posted job
+  // ========================================
+  const extendDeadline = async (id) => {
+    const newDeadline = prompt("Enter new deadline date: YYYY-MM-DD");
+
+    if (!newDeadline) return;
+
+    try {
+      await api.put(`/jobs/${id}/extend-deadline`, {
+        deadline: newDeadline,
+      });
+
+      alert("Deadline extended");
+      loadMyJobs();
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to extend deadline");
+    }
+  };
+
   return (
     <div className="container">
       <h2>My Jobs</h2>
@@ -134,6 +168,10 @@ function MyJobs() {
               {job.engineer ? job.engineer.name : "Not accepted yet"}
             </p>
 
+            <p>
+              <strong>Deadline:</strong> {job.deadline || "No deadline"}
+            </p>
+
             {job.status === "open" && (
               <button
                 style={{ background: "#ef4444" }}
@@ -142,10 +180,18 @@ function MyJobs() {
                 Delete Job
               </button>
             )}
-            {job.status === "in_progress" && (
+
+            {job.status === "in_progress" && job.submission_path && (
               <button onClick={() => completeJob(job.id)}>
                 Mark Complete & Transfer Points
               </button>
+            )}
+
+            {/* Waiting for engineer submission */}
+            {job.status === "in_progress" && !job.submission_path && (
+              <p className="small">
+                Waiting for engineer to submit completed work.
+              </p>
             )}
 
             {job.submission_path && (
@@ -158,6 +204,25 @@ function MyJobs() {
                 <p className="small">
                   Work submitted. Waiting for client to complete the job.
                 </p>
+              </div>
+            )}
+
+            {job.status !== "completed" && isDeadlinePassed(job.deadline) && (
+              <div className="deadline-box">
+                <p className="small danger-text">
+                  Deadline passed. You can extend the deadline or delete this job.
+                </p>
+
+                <button onClick={() => extendDeadline(job.id)}>
+                  Extend Deadline
+                </button>
+
+                <button
+                  className="danger-btn"
+                  onClick={() => deleteJob(job.id)}
+                >
+                  Delete Job
+                </button>
               </div>
             )}
 
@@ -229,6 +294,17 @@ function MyJobs() {
                 {job.status}
               </span>
             </p>
+
+            {/* Job deadline visible to engineer */}
+            <p>
+              <strong>Deadline:</strong> {job.deadline || "No deadline"}
+            </p>
+
+            {isDeadlinePassed(job.deadline) && job.status !== "completed" && (
+              <p className="small danger-text">
+                Deadline has passed. Please contact the client.
+              </p>
+            )}
 
             <p><strong>Client:</strong> {job.client?.name}</p>
 

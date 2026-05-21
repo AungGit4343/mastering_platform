@@ -700,3 +700,28 @@ input:disabled {
   border-radius: 14px;
   overflow: hidden;
 }
+
+/* ========================================
+   DEADLINE WARNING BOX
+======================================== */
+
+.deadline-box {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 14px;
+  background: #f3e8e8;
+  border: 1px solid #c9a4a4;
+}
+
+.danger-text {
+  color: #7f1d1d;
+  font-weight: 600;
+}
+
+.danger-btn {
+  background: #7f1d1d;
+}
+
+.danger-btn:hover {
+  background: #5f1717;
+}

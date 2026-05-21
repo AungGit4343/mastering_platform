@@ -6,6 +6,8 @@ function PostJob() {
   const [description, setDescription] = useState("");
   const [reward, setReward] = useState("");
   const [audio, setAudio] = useState(null);
+  // Job deadline selected by client
+  const [deadline, setDeadline] = useState("");
 
   const postJob = async () => {
     const formData = new FormData();
@@ -14,7 +16,7 @@ function PostJob() {
     formData.append("description", description);
     formData.append("reward", reward);
     formData.append("audio", audio);
-
+    formData.append("deadline", deadline);
     try {
       await api.post("/jobs", formData, {
         headers: {
@@ -43,11 +45,18 @@ function PostJob() {
         <p className="small">
           Please upload one high-quality WAV file or mp3.
         </p>
-        <input 
-        type="file" 
-        accept=",mp3,.wav,audio/mpeg,audio/wav"
-        onChange={e => setAudio(e.target.files[0])} />
+        <input
+          type="file"
+          accept=",mp3,.wav,audio/mpeg,audio/wav"
+          onChange={e => setAudio(e.target.files[0])} />
 
+        <label>Job Deadline</label>
+        <input
+          type="date"
+          value={deadline}
+          onChange={(e) => setDeadline(e.target.value)}
+        />
+        
         <button onClick={postJob}>Post Job</button>
       </div>
     </div>

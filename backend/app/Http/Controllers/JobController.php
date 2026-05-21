@@ -26,6 +26,7 @@ class JobController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'reward' => 'required|integer|min:1',
+            'deadline' => 'required|date|after_or_equal:today',
             'audio' => 'required|file|mimes:mp3,wav|max:102400',
         ]);
 
@@ -42,6 +43,7 @@ class JobController extends Controller
             'client_id' => Auth::id(),
             'audio_path' => $path,
             'status' => 'open',
+            'deadline' => $request->deadline,
         ]);
     }
 
@@ -56,9 +58,11 @@ class JobController extends Controller
             ], 403);
         }
 
-        if ($job->status !== 'open') {
+        $deadlinePassed = $job->deadline && now()->toDateString() > $job->deadline;
+
+        if ($job->status !== 'open' && !$deadlinePassed) {
             return response()->json([
-                'message' => 'Cannot delete job after it is accepted',
+                'message' => 'You can only delete accepted jobs after the deadline has passed',
             ], 400);
         }
 
@@ -185,6 +189,41 @@ class JobController extends Controller
 
         return response()->json([
             'message' => 'Audio submitted',
+            'job' => $job,
+        ]);
+    }
+
+    // Extend job deadline
+    // Only the client who posted the job can extend it
+
+    public function extendDeadline(Request $request, int $id)
+    {
+        $job = Job::findOrFail($id);
+
+        // Only job owner can extend deadline
+        if ($job->client_id !== Auth::id()) {
+            return response()->json([
+                'message' => 'Not authorized',
+            ], 403);
+        }
+
+        // Completed jobs should not be extended
+        if ($job->status === 'completed') {
+            return response()->json([
+                'message' => 'Completed jobs cannot be extended',
+            ], 400);
+        }
+
+        // Validate new deadline
+        $request->validate([
+            'deadline' => 'required|date|after:today',
+        ]);
+
+        $job->deadline = $request->deadline;
+        $job->save();
+
+        return response()->json([
+            'message' => 'Deadline extended successfully',
             'job' => $job,
         ]);
     }
