@@ -50,4 +50,14 @@ class User extends Authenticatable
             'is_admin' => 'boolean',
         ];
     }
+
+    public function receivedReviews()
+    {
+    return $this->hasMany(Review::class, 'engineer_id');
+    }
+
+    public function givenReviews()
+    {
+        return $this->hasMany(Review::class, 'reviewer_id');
+    }
 }

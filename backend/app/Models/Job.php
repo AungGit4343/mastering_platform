@@ -29,4 +29,9 @@ class Job extends Model
     {
         return $this->belongsTo(User::class, 'engineer_id');
     }
+
+    public function review()
+    {
+     return $this->hasOne(Review::class);
+    }
 }

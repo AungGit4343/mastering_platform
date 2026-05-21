@@ -16,9 +16,6 @@ function Home() {
               Get Started
             </Link>
 
-            <Link to="/jobs" className="secondary-link">
-              Browse Jobs
-            </Link>
           </div>
         </div>
       </section>

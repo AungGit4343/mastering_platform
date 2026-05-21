@@ -4,12 +4,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ReviewController;
 
-// Public auth routes
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
 
-// Logged-in user routes
+    // Public auth routes
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+
+    // Logged-in user routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
 
@@ -21,11 +23,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // My jobs routes
     Route::delete('/jobs/{id}', [JobController::class, 'destroy']);
-    
+    Route::post('/jobs/{id}/reviews', [ReviewController::class, 'store']);
     Route::get('/my-posted-jobs', [JobController::class, 'myPostedJobs']);
     Route::get('/my-accepted-jobs', [JobController::class, 'myAcceptedJobs']);
 
-     // Audio Submit 
+    // Audio Submit 
     Route::post('/jobs/{id}/submit', [JobController::class, 'submit']);
 });
 
@@ -38,5 +40,4 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
 
     // Admin updates user password and points
     Route::put('/users/{id}', [AdminController::class, 'updateUser']);
-
 });

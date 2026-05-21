@@ -6,7 +6,9 @@ function MyJobs() {
   const [postedJobs, setPostedJobs] = useState([]);
   const [acceptedJobs, setAcceptedJobs] = useState([]);
   const [submissionFile, setSubmissionFile] = useState(null);
-  
+  const [reviewStars, setReviewStars] = useState(5);
+  const [reviewComment, setReviewComment] = useState("");
+
   // Load jobs created and accepted by logged-in user
   const loadMyJobs = async () => {
     try {
@@ -21,29 +23,31 @@ function MyJobs() {
     }
   };
 
-  //Submit Audio
+  // Submit completed audio file by engineer
   const submitAudio = async (id) => {
-  const formData = new FormData();
-  formData.append("audio", submissionFile);
+    if (!submissionFile) {
+      alert("Please choose an MP3 or WAV file first.");
+      return;
+    }
 
-  try {
-    await api.post(`/jobs/${id}/submit`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const formData = new FormData();
+    formData.append("audio", submissionFile);
 
-    alert("Submitted!");
+    try {
+      await api.post(`/jobs/${id}/submit`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-    // Refresh job lists to reflect submission
-      setAcceptedJobs((prevJobs) =>
-      prevJobs.filter((job) => job.id !== id)
-    );
-
-    setSubmissionFile(null);
-
-  } catch (err) {
-    alert("Submission failed");
-  }
-};
+      alert("Submitted!");
+      setSubmissionFile(null);
+      await loadMyJobs();
+    } catch (err) {
+      console.error(err.response?.data || err);
+      alert(err.response?.data?.message || "Submission failed");
+    }
+  };
 
   useEffect(() => {
     loadMyJobs();
@@ -51,16 +55,16 @@ function MyJobs() {
 
   //Delete Job
   const deleteJob = async (id) => {
-  if (!window.confirm("Are you sure you want to delete this job?")) return;
+    if (!window.confirm("Are you sure you want to delete this job?")) return;
 
-  try {
-    await api.delete(`/jobs/${id}`);
-    alert("Job deleted");
-    loadMyJobs();
-  } catch (err) {
-    alert(err.response?.data?.message || "Delete failed");
-  }
-};
+    try {
+      await api.delete(`/jobs/${id}`);
+      alert("Job deleted");
+      loadMyJobs();
+    } catch (err) {
+      alert(err.response?.data?.message || "Delete failed");
+    }
+  };
 
   // Client marks job complete and transfers points
   const completeJob = async (id) => {
@@ -70,6 +74,21 @@ function MyJobs() {
       loadMyJobs();
     } catch (err) {
       alert(err.response?.data?.message || "Failed to complete job");
+    }
+  };
+
+  // Client submits review for engineer
+  const submitReview = async (jobId) => {
+    try {
+      await api.post(`/jobs/${jobId}/reviews`, {
+        stars: reviewStars,
+        comment: reviewComment,
+      });
+
+      alert("Review submitted!");
+      loadMyJobs();
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to submit review");
     }
   };
 
@@ -94,7 +113,7 @@ function MyJobs() {
             <p>You have not posted any jobs yet.</p>
           </div>
         )}
-        
+
 
         {postedJobs.map((job) => (
           <div className="card" key={job.id}>
@@ -114,18 +133,7 @@ function MyJobs() {
               <strong>Engineer:</strong>{" "}
               {job.engineer ? job.engineer.name : "Not accepted yet"}
             </p>
-            
-            {/*Submit mp3 or wav*/}
-            <p className="small">
-              Submit one completed audio file (MP3 or WAV)
-            </p>
 
-            <input
-              type="file"
-              accept=".mp3,.wav,audio/mpeg,audio/wav"
-              onChange={(e) => setSubmissionFile(e.target.files[0])}
-            />
-            
             {job.status === "open" && (
               <button
                 style={{ background: "#ef4444" }}
@@ -141,12 +149,59 @@ function MyJobs() {
             )}
 
             {job.submission_path && (
-              <>
-                <p>Submitted Audio:</p>
-                <audio controls src={`http://localhost:8000/storage/${job.submission_path}`} />
-              </>
+              <div className="audio-box">
+                <p className="small">Submitted Audio</p>
+                <audio
+                  controls
+                  src={`http://localhost:8000/storage/${job.submission_path}`}
+                />
+                <p className="small">
+                  Work submitted. Waiting for client to complete the job.
+                </p>
+              </div>
             )}
-            
+
+            {/* Review section */}
+            {job.status === "completed" && !job.review && (
+              <div className="review-box">
+                <h4>Leave a Review</h4>
+
+                <select
+                  value={reviewStars}
+                  onChange={(e) => setReviewStars(e.target.value)}
+                >
+                  <option value="5">★★★★★ 5</option>
+                  <option value="4">★★★★☆ 4</option>
+                  <option value="3">★★★☆☆ 3</option>
+                  <option value="2">★★☆☆☆ 2</option>
+                  <option value="1">★☆☆☆☆ 1</option>
+                </select>
+
+                <textarea
+                  placeholder="Write feedback for the engineer"
+                  value={reviewComment}
+                  onChange={(e) => setReviewComment(e.target.value)}
+                />
+
+                <button onClick={() => submitReview(job.id)}>
+                  Submit Review
+                </button>
+              </div>
+            )}
+
+            {job.review && (
+              <div className="review-box">
+                <p>
+                  <strong>Your Review:</strong>{" "}
+                  {"★".repeat(job.review.stars)}
+                </p>
+
+                {job.review.comment && (
+                  <p>{job.review.comment}</p>
+                )}
+              </div>
+            )}
+
           </div>
         ))}
       </section>
@@ -183,19 +238,52 @@ function MyJobs() {
               </p>
             )}
 
-            {job.status === "in_progress" && (
+            {/* Show upload form only if work not submitted yet */}
+            {job.status === "in_progress" && !job.submission_path && (
               <>
-                <input type="file" onChange={e => setSubmissionFile(e.target.files[0])} />
+                <p className="small">
+                  Submit one completed audio file (MP3 or WAV)
+                </p>
+
+                <input
+                  type="file"
+                  accept=".mp3,.wav,audio/mpeg,audio/wav"
+                  onChange={(e) => setSubmissionFile(e.target.files[0])}
+                />
+
                 <button onClick={() => submitAudio(job.id)}>
                   Submit Work
                 </button>
               </>
             )}
 
+            {/* After submission */}
+            {job.submission_path && job.status !== "completed" && (
+              <div className="audio-box">
+                <p className="small success-text">
+                  ✅ Submitted — waiting for client approval
+                </p>
+
+                <audio
+                  controls
+                  src={`http://localhost:8000/storage/${job.submission_path}`}
+                />
+              </div>
+            )}
+
             {job.status === "completed" && (
-              <p className="small">
-                Completed. Points have been transferred.
-              </p>
+              <div className="audio-box">
+                <p className="small success-text">
+                  ✅ Completed - points transferred to your account
+                </p>
+
+                {job.submission_path && (
+                  <audio
+                    controls
+                    src={`http://localhost:8000/storage/${job.submission_path}`}
+                  />
+                )}
+              </div>
             )}
           </div>
         ))}

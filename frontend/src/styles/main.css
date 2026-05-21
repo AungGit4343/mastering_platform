@@ -573,3 +573,27 @@ section {
     grid-template-columns: 1fr;
   }
 }
+
+/* =========================
+   Review PAGE
+========================= */
+.review-box {
+  margin-top: 18px;
+  padding: 16px;
+  background: #f9fafb;
+  border: 1px solid #eee;
+  border-radius: 14px;
+}
+
+.review-box h4 {
+  margin-bottom: 8px;
+}
+
+/* =========================
+    SUCCESS MESSAGE
+========================= */
+.success-text {
+  color: #16a34a;
+  font-weight: 600;
+  margin-bottom: 10px;
+}

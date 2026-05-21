@@ -143,7 +143,7 @@ class JobController extends Controller
     public function myPostedJobs()
     {
         return Job::where('client_id', Auth::id())
-            ->with('engineer:id,name,email')
+            ->with('engineer:id,name,email', 'review')
             ->latest()
             ->get();
     }
