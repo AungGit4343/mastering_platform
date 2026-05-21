@@ -701,9 +701,7 @@ input:disabled {
   overflow: hidden;
 }
 
-/* ========================================
-   DEADLINE WARNING BOX
-======================================== */
+/* DEADLINE WARNING BOX */
 
 .deadline-box {
   margin-top: 16px;
@@ -724,4 +722,23 @@ input:disabled {
 
 .danger-btn:hover {
   background: #5f1717;
+}
+
+/* PROFILE DETAILS */
+
+.profile-details {
+  margin-top: 18px;
+  text-align: left;
+}
+
+.profile-details p {
+  margin-top: 10px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* SEARCH BAR */
+
+.search-input {
+  margin-bottom: 10px;
 }

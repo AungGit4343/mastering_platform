@@ -115,6 +115,10 @@ class ReviewController extends Controller
             'completed_jobs' => $user->completed_jobs,
             'average_rating' => round($user->average_rating ?? 0, 2),
             'reviews' => $user->receivedReviews,
+            'about' => $user->about,
+            'education' => $user->education,
+            'experience' => $user->experience,
+            'profile_photo' => $user->profile_photo,
         ]);
     }
 }

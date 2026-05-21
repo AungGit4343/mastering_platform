@@ -12,23 +12,32 @@ class AuthController extends Controller
     // REGISTER USER
     public function register(Request $request)
     {
-        // Validate input fields
+        // Validate all registration fields
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6|confirmed', // password_confirmation required
+            'password' => 'required|min:6|confirmed',
+
+            // Required profile information
+            'about' => 'required|string|max:1000',
+            'education' => 'required|string|max:1000',
+            'experience' => 'required|string|max:1000',
         ]);
 
-        // Create new user
+        // Create user only after validation passes
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'points' => 0,
-            'is_admin' => false, // default user
+            'is_admin' => false,
+
+            // Save required profile details
+            'about' => $request->about,
+            'education' => $request->education,
+            'experience' => $request->experience,
         ]);
 
-        // Return created user
         return response()->json([
             'message' => 'User registered successfully',
             'user' => $user,
@@ -80,10 +89,20 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|min:6|confirmed',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+
+            // Required profile fields
+            'about' => 'required|string|max:1000',
+            'education' => 'required|string|max:1000',
+            'experience' => 'required|string|max:1000',
         ]);
 
         // Username/name is intentionally locked
         $user->email = $request->email;
+
+        // Update required profile details
+        $user->about = $request->about;
+        $user->education = $request->education;
+        $user->experience = $request->experience;
 
         // Update password only if user entered one
         if ($request->filled('password')) {

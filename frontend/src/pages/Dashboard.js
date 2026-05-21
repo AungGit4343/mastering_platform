@@ -22,6 +22,11 @@ function Dashboard() {
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
 
+  // Editable profile detail fields
+  const [about, setAbout] = useState("");
+  const [education, setEducation] = useState("");
+  const [experience, setExperience] = useState("");
+
   useEffect(() => {
     const isAdmin = localStorage.getItem("is_admin") === "true";
 
@@ -34,6 +39,9 @@ function Dashboard() {
       .then((res) => {
         setUser(res.data);
         setEmail(res.data.email || "");
+        setAbout(res.data.about || "");
+        setEducation(res.data.education || "");
+        setExperience(res.data.experience || "");
       })
       .catch((err) => {
         console.error(err);
@@ -45,6 +53,9 @@ function Dashboard() {
     setEmail(user.email || "");
     setPassword("");
     setPasswordConfirmation("");
+    setAbout(user.about || "");
+    setEducation(user.education || "");
+    setExperience(user.experience || "");
     setShowEditModal(true);
   };
 
@@ -100,6 +111,9 @@ function Dashboard() {
 
       // Add editable fields
       formData.append("email", email);
+      formData.append("about", about);
+      formData.append("education", education);
+      formData.append("experience", experience);
 
       // Add password only if user entered it
       if (password) {
@@ -162,6 +176,21 @@ function Dashboard() {
           <h2>{user.name}</h2>
           <p className="small">{user.email}</p>
 
+          {/* User profile details shown on dashboard */}
+          <div className="profile-details">
+            <p>
+              <strong>About:</strong> {user.about || "Not added yet"}
+            </p>
+
+            <p>
+              <strong>Education:</strong> {user.education || "Not added yet"}
+            </p>
+
+            <p>
+              <strong>Experience:</strong> {user.experience || "Not added yet"}
+            </p>
+          </div>
+
           <div className="points-box">
             <span className="points-label">Points</span>
             <span className="points-value">{user.points}</span>
@@ -221,6 +250,37 @@ function Dashboard() {
                 Cropped photo ready to upload.
               </p>
             )}
+
+            {/* ========================================
+   About section
+======================================== */}
+            <label>About</label>
+
+            <textarea
+              placeholder="Tell others about yourself"
+              value={about}
+              onChange={(e) => setAbout(e.target.value)}
+            />
+
+            {/* ========================================
+   Education section
+======================================== */}
+            <label>Education</label>
+
+            <textarea
+              placeholder="Your education background"
+              value={education}
+              onChange={(e) => setEducation(e.target.value)}
+            />
+
+            {/* Experience section */}
+            <label>Experience</label>
+
+            <textarea
+              placeholder="Your mastering / audio experience"
+              value={experience}
+              onChange={(e) => setExperience(e.target.value)}
+            />
 
             <label>New Password</label>
             <input

@@ -26,6 +26,9 @@ class User extends Authenticatable
         'points',
         'is_admin',
         'profile_photo',
+        'about',
+        'education',
+        'experience',
     ];
 
     /**
@@ -54,7 +57,7 @@ class User extends Authenticatable
 
     public function receivedReviews()
     {
-    return $this->hasMany(Review::class, 'engineer_id');
+        return $this->hasMany(Review::class, 'engineer_id');
     }
 
     public function givenReviews()

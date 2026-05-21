@@ -5,13 +5,29 @@ function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  // Required profile information
+  const [about, setAbout] = useState("");
+  const [education, setEducation] = useState("");
+  const [experience, setExperience] = useState("");
 
   const register = async () => {
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
     try {
       await api.post("/register", {
         name,
         email,
         password,
+        password_confirmation: confirmPassword,
+
+        about,
+        education,
+        experience
       });
 
       alert("Registered successfully");
@@ -39,9 +55,35 @@ function Register() {
         <input
           type="password"
           placeholder="Password"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+        />
+
+        {/* Required profile details */}
+        <textarea
+          placeholder="About yourself"
+          value={about}
+          onChange={(e) => setAbout(e.target.value)}
+        />
+
+        <textarea
+          placeholder="Education background"
+          value={education}
+          onChange={(e) => setEducation(e.target.value)}
+        />
+
+        <textarea
+          placeholder="Experience in audio/mastering"
+          value={experience}
+          onChange={(e) => setExperience(e.target.value)}
+        />
         <button onClick={register}>Register</button>
       </div>
     </div>
