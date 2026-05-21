@@ -1,3 +1,25 @@
+/* =========================
+   GLOBAL RESET + THEME COLORS
+========================= */
+
+:root {
+  --bg-main: #dcdfe3;
+  --bg-card: #eceef1;
+  --bg-dark: #111111;
+  --bg-dark-soft: #1f1f1f;
+
+  --text-main: #1f2933;
+  --text-muted: #6b7280;
+  --text-light: #f9fafb;
+
+  --border-soft: #e5e7eb;
+
+  --accent-red: #b91c1c;
+  --accent-red-dark: #7f1d1d;
+  --accent-red-soft: #fee2e2;
+
+  --shadow-soft: 0 8px 22px rgba(0, 0, 0, 0.08);
+}
 
 * {
   margin: 0;
@@ -7,31 +29,37 @@
 }
 
 body {
-  background: #f5f6f8;
-  color: #222;
+  background: var(--bg-main);
+  color: var(--text-main);
 }
 
 a {
   text-decoration: none;
 }
 
-
-/* =========================
-   NORMAL SITE NAVBAR
-========================= */
+/* SITE NAVBAR */
 
 .navbar {
-  background: white;
+  background: #d7dbe0;
   padding: 18px 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-soft);
 }
 
 .brand {
-  color: #1dbf73;
+  color: var(--bg-dark);
   font-size: 26px;
+  letter-spacing: -0.5px;
+}
+
+.brand-link {
+  text-decoration: none;
+}
+
+.brand-link:hover {
+  opacity: 0.85;
 }
 
 .nav-right {
@@ -46,9 +74,27 @@ a {
 }
 
 .nav-right a:hover {
-  color: #1dbf73;
+  color: var(--accent-red);
 }
 
+/* Logo + subtitle */
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.site-logo {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+}
+
+.brand-subtitle {
+  font-size: 12px;
+  color: #777;
+  margin-top: 2px;
+}
 
 /* =========================
    GENERAL LAYOUT
@@ -61,11 +107,12 @@ a {
 }
 
 .card {
-  background: white;
+  background: var(--bg-card);
   padding: 26px;
   margin-bottom: 20px;
-  border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+  border-radius: 18px;
+  border: 1px solid #cfd4da;
+  box-shadow: var(--shadow-soft);
 }
 
 .login-card {
@@ -75,10 +122,9 @@ a {
 
 .small {
   margin-top: 8px;
-  color: #666;
+  color: var(--text-muted);
   font-size: 14px;
 }
-
 
 /* =========================
    FORMS
@@ -91,8 +137,18 @@ select {
   padding: 12px;
   margin-top: 12px;
   border-radius: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #d1d5db;
   font-size: 15px;
+  background: #ffffff;
+  color: var(--text-main);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent-red);
+  box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.12);
 }
 
 textarea {
@@ -106,28 +162,28 @@ button {
   padding: 12px;
   border: none;
   border-radius: 10px;
-  background: #1dbf73;
+  background: var(--accent-red);
   color: white;
   font-weight: bold;
   font-size: 15px;
   cursor: pointer;
+  transition: 0.2s ease;
 }
 
 button:hover {
-  background: #19a463;
+  background: var(--accent-red-dark);
 }
 
 .logout-btn {
   width: auto;
   margin-top: 0;
   padding: 10px 16px;
-  background: #111827;
+  background: var(--bg-dark);
 }
 
 .logout-btn:hover {
   background: #000;
 }
-
 
 /* =========================
    DASHBOARD
@@ -140,11 +196,12 @@ button:hover {
 }
 
 .profile-card {
-  background: white;
-  border-radius: 16px;
+  background: var(--bg-card);
+  border-radius: 18px;
   padding: 28px;
   text-align: center;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+  border: 1px solid #cfd4da;
+  box-shadow: var(--shadow-soft);
 }
 
 .avatar {
@@ -152,7 +209,7 @@ button:hover {
   height: 90px;
   margin: 0 auto 16px;
   border-radius: 50%;
-  background: #1dbf73;
+  background: linear-gradient(135deg, #1a1a1a, #2d2f34, #4b1d1d);;
   color: white;
   display: flex;
   align-items: center;
@@ -164,21 +221,21 @@ button:hover {
 .points-box {
   margin-top: 24px;
   padding: 18px;
-  background: #f4fff9;
-  border: 1px solid #d9f5e7;
+  background: #f9fafb;
+  border: 1px solid var(--border-soft);
   border-radius: 14px;
 }
 
 .points-label {
   display: block;
-  color: #666;
+  color: var(--text-muted);
   font-size: 14px;
 }
 
 .points-value {
   display: block;
   margin-top: 6px;
-  color: #1dbf73;
+  color: var(--accent-red);
   font-size: 32px;
   font-weight: bold;
 }
@@ -190,17 +247,19 @@ button:hover {
 }
 
 .dashboard-link-card {
-  background: white;
+  background: var(--bg-card);
   padding: 24px;
-  border-radius: 16px;
-  color: #222;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+  border-radius: 18px;
+  color: var(--text-main);
+  border: 1px solid #cfd4da;
+  box-shadow: var(--shadow-soft);
+  transition: 0.2s ease;
 }
 
 .dashboard-link-card:hover {
   transform: translateY(-3px);
+  border-color: #d6d3d1;
 }
-
 
 /* =========================
    JOB STATUS BADGES
@@ -215,24 +274,23 @@ button:hover {
 }
 
 .status-open {
-  background: #e8f5ff;
-  color: #0369a1;
+  background: #f3f4f6;
+  color: #374151;
 }
 
 .status-progress {
-  background: #fff7ed;
-  color: #c2410c;
+  background: #fef2f2;
+  color: var(--accent-red);
 }
 
 .status-completed {
-  background: #ecfdf5;
-  color: #047857;
+  background: #e5e7eb;
+  color: #111827;
 }
 
 section {
   margin-top: 32px;
 }
-
 
 /* =========================
    ADMIN SIDEBAR LAYOUT
@@ -242,11 +300,11 @@ section {
   min-height: 100vh;
   display: grid;
   grid-template-columns: 260px 1fr;
-  background: #f5f6f8;
+  background: var(--bg-main);
 }
 
 .admin-sidebar {
-  background: #111827;
+  background: var(--bg-dark);
   color: white;
   padding: 24px;
   display: flex;
@@ -255,7 +313,7 @@ section {
 
 .admin-logo {
   margin-bottom: 32px;
-  color: #1dbf73;
+  color: #ffffff;
   font-size: 22px;
 }
 
@@ -272,7 +330,7 @@ section {
 }
 
 .admin-menu a:hover {
-  background: #1f2937;
+  background: var(--bg-dark-soft);
   color: white;
 }
 
@@ -282,13 +340,12 @@ section {
 
 .admin-logout {
   margin-top: auto;
-  background: #ef4444;
+  background: var(--accent-red);
 }
 
 .admin-logout:hover {
-  background: #dc2626;
+  background: var(--accent-red-dark);
 }
-
 
 /* =========================
    ADMIN STATS
@@ -302,24 +359,24 @@ section {
 }
 
 .stat-card {
-  background: white;
+  background: var(--bg-card);
   padding: 22px;
-  border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+  border-radius: 18px;
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
 }
 
 .stat-card h3 {
-  color: #666;
+  color: var(--text-muted);
   font-size: 15px;
 }
 
 .stat-card p {
   margin-top: 10px;
-  color: #1dbf73;
+  color: var(--accent-red);
   font-size: 30px;
   font-weight: bold;
 }
-
 
 /* =========================
    ADMIN TABLE
@@ -334,11 +391,11 @@ section {
 .admin-table td {
   text-align: left;
   padding: 14px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-soft);
 }
 
 .admin-table th {
-  background: #fafafa;
+  background: #f9fafb;
   font-weight: 700;
 }
 
@@ -347,7 +404,6 @@ section {
   margin-top: 0;
   padding: 8px 14px;
 }
-
 
 /* =========================
    POPUP MODAL
@@ -359,7 +415,7 @@ section {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(17, 24, 39, 0.6);
+  background: rgba(17, 17, 17, 0.65);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -373,7 +429,7 @@ section {
   background: white;
   border-radius: 18px;
   padding: 28px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
 }
 
 .modal-card label {
@@ -382,7 +438,6 @@ section {
   font-weight: 600;
   font-size: 14px;
 }
-
 
 /* =========================
    POINTS CONTROL
@@ -393,7 +448,6 @@ section {
   grid-template-columns: 140px 1fr;
   gap: 10px;
 }
-
 
 /* =========================
    PASSWORD FIELD
@@ -416,7 +470,6 @@ section {
   font-size: 16px;
 }
 
-
 /* =========================
    CANCEL BUTTON
 ========================= */
@@ -430,6 +483,127 @@ section {
   background: #d1d5db;
 }
 
+/* =========================
+   PUBLIC HOME PAGE
+========================= */
+
+.hero-section {
+  min-height: 70vh;
+  background: linear-gradient(135deg, #111111, #2b2b2b, #7f1d1d);
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 60px 40px;
+}
+
+.hero-content {
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero-content h1 {
+  font-size: 52px;
+  margin-bottom: 20px;
+}
+
+.hero-content p {
+  font-size: 18px;
+  color: #e5e7eb;
+  line-height: 1.6;
+}
+
+.hero-buttons {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.primary-link,
+.secondary-link {
+  padding: 13px 22px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.primary-link {
+  background: var(--accent-red);
+  color: white;
+}
+
+.primary-link:hover {
+  background: var(--accent-red-dark);
+}
+
+.secondary-link {
+  background: #ffffff;
+  color: #111111;
+}
+
+.public-section {
+  max-width: 1100px;
+  margin: 60px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.info-grid {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.info-card {
+  background: white;
+  padding: 28px;
+  border-radius: 18px;
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+}
+
+.info-card h3 {
+  margin-bottom: 12px;
+  color: #111111;
+}
+
+.info-card p,
+.public-text {
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* =========================
+   AUDIO + REVIEW
+========================= */
+
+.audio-box {
+  margin-top: 16px;
+}
+
+.audio-box audio {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.review-box {
+  margin-top: 18px;
+  padding: 16px;
+  background: #f9fafb;
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+}
+
+.review-box h4 {
+  margin-bottom: 8px;
+}
+
+.success-text {
+  color: #374151;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
 
 /* =========================
    RESPONSIVE DESIGN
@@ -469,98 +643,11 @@ section {
     padding: 20px;
   }
 
-  .points-control {
+  .points-control,
+  .info-grid {
     grid-template-columns: 1fr;
   }
-}
 
-/* =========================
-   PUBLIC HOME PAGE
-========================= */
-
-.hero-section {
-  min-height: 70vh;
-  background: linear-gradient(135deg, #111827, #064e3b);
-  color: white;
-  display: flex;
-  align-items: center;
-  padding: 60px 40px;
-}
-
-.hero-content {
-  max-width: 760px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.hero-content h1 {
-  font-size: 52px;
-  margin-bottom: 20px;
-}
-
-.hero-content p {
-  font-size: 18px;
-  color: #d1d5db;
-  line-height: 1.6;
-}
-
-.hero-buttons {
-  margin-top: 30px;
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-}
-
-.primary-link,
-.secondary-link {
-  padding: 13px 22px;
-  border-radius: 10px;
-  font-weight: 700;
-}
-
-.primary-link {
-  background: #1dbf73;
-  color: white;
-}
-
-.secondary-link {
-  background: white;
-  color: #111827;
-}
-
-.public-section {
-  max-width: 1100px;
-  margin: 60px auto;
-  padding: 0 20px;
-  text-align: center;
-}
-
-.info-grid {
-  margin-top: 28px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
-}
-
-.info-card {
-  background: white;
-  padding: 28px;
-  border-radius: 18px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
-}
-
-.info-card h3 {
-  margin-bottom: 12px;
-  color: #111827;
-}
-
-.info-card p,
-.public-text {
-  color: #666;
-  line-height: 1.6;
-}
-
-@media (max-width: 800px) {
   .hero-content h1 {
     font-size: 36px;
   }
@@ -568,32 +655,13 @@ section {
   .hero-buttons {
     flex-direction: column;
   }
-
-  .info-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* =========================
-   Review PAGE
+   Edit User Profile
 ========================= */
-.review-box {
-  margin-top: 18px;
-  padding: 16px;
-  background: #f9fafb;
-  border: 1px solid #eee;
-  border-radius: 14px;
-}
-
-.review-box h4 {
-  margin-bottom: 8px;
-}
-
-/* =========================
-    SUCCESS MESSAGE
-========================= */
-.success-text {
-  color: #16a34a;
-  font-weight: 600;
-  margin-bottom: 10px;
+input:disabled {
+  background: #cfd4da;
+  color: #666;
+  cursor: not-allowed;
 }

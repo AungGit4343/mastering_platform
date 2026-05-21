@@ -5,22 +5,64 @@ import api from "../api";
 function Dashboard() {
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
+  const [showEditModal, setShowEditModal] = useState(false);
 
-     const isAdmin = localStorage.getItem("is_admin") === "true";
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
+
+  useEffect(() => {
+    const isAdmin = localStorage.getItem("is_admin") === "true";
 
     if (isAdmin) {
       window.location.href = "/admin";
       return;
     }
-    
+
     api.get("/me")
-      .then((res) => setUser(res.data))
+      .then((res) => {
+        setUser(res.data);
+        setEmail(res.data.email || "");
+      })
       .catch((err) => {
         console.error(err);
         alert("Failed to load dashboard");
       });
   }, []);
+
+  const openEditModal = () => {
+    setEmail(user.email || "");
+    setPassword("");
+    setPasswordConfirmation("");
+    setShowEditModal(true);
+  };
+
+  const closeEditModal = () => {
+    setShowEditModal(false);
+    setPassword("");
+    setPasswordConfirmation("");
+  };
+
+  const updateProfile = async () => {
+    try {
+      await api.put("/profile", {
+        email,
+        password: password || undefined,
+        password_confirmation: passwordConfirmation || undefined,
+      });
+
+      alert("Profile updated!");
+
+      const res = await api.get("/me");
+      setUser(res.data);
+      setEmail(res.data.email || "");
+
+      closeEditModal();
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Failed to update profile");
+    }
+  };
 
   if (!user) {
     return (
@@ -47,6 +89,8 @@ function Dashboard() {
             <span className="points-label">Points</span>
             <span className="points-value">{user.points}</span>
           </div>
+
+          <button onClick={openEditModal}>Edit Profile</button>
         </div>
 
         <div className="dashboard-main">
@@ -70,6 +114,47 @@ function Dashboard() {
           </div>
         </div>
       </div>
+
+      {showEditModal && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <h2>Edit Profile</h2>
+            <p className="small">Username cannot be changed.</p>
+
+            <label>Name / Username</label>
+            <input value={user.name} disabled />
+
+            <label>Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <label>New Password</label>
+            <input
+              type="password"
+              placeholder="Leave blank to keep current password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+            <label>Confirm Password</label>
+            <input
+              type="password"
+              placeholder="Confirm new password"
+              value={passwordConfirmation}
+              onChange={(e) => setPasswordConfirmation(e.target.value)}
+            />
+
+            <button onClick={updateProfile}>Save Profile</button>
+
+            <button className="cancel-btn" onClick={closeEditModal}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

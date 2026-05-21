@@ -70,6 +70,31 @@ class AuthController extends Controller
         ]);
     }
 
+    //EDIT USER PROFILE
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|min:6|confirmed',
+        ]);
+
+        // Name/username is intentionally NOT editable
+        $user->email = $request->email;
+
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+
+        return response()->json([
+            'message' => 'Profile updated successfully',
+            'user' => $user,
+        ]);
+    }
+
     // GET CURRENT USER (AUTH)
     public function me(Request $request)
     {

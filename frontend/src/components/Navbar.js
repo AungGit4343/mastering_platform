@@ -1,28 +1,62 @@
-// Normal website navbar
+// Website Navbar Component
+
+
 import { Link } from "react-router-dom";
+import logo from "../assets/logo.png";
 
 function Navbar() {
+
+  // Get auth data from localStorage
   const token = localStorage.getItem("token");
   const isAdmin = localStorage.getItem("is_admin") === "true";
 
-  // Logout user
+  // Logout current user
+ 
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("is_admin");
     localStorage.removeItem("user_name");
+
+    // Redirect to login page
     window.location.href = "/login";
   };
 
   return (
-    <div className="navbar">
+
+    // Main Navbar
+    
+    <nav className="navbar">
+
+      {/* Website Logo + Brand*/}
       <div className="nav-left">
-        <Link to="/" className="brand-link">
-          <h2 className="brand">SecondEars</h2>
+
+        <Link to="/" className="brand-link logo-wrap">
+
+          {/* Website logo image */}
+          <img
+            src={logo}
+            alt="SecondEars Logo"
+            className="site-logo"
+          />
+
+          {/* Brand text */}
+          <div>
+            <h2 className="brand">
+              SecondEars
+            </h2>
+
+            <p className="brand-subtitle">
+              Another set of ears for your music
+            </p>
+          </div>
+
         </Link>
       </div>
 
+      {/* Navigation Links */}
       <div className="nav-right">
-        {/* Not logged in */}
+
+        {/*Guest Navigation */}
         {!token && (
           <>
             <Link to="/">Home</Link>
@@ -31,33 +65,59 @@ function Navbar() {
           </>
         )}
 
-        {/* Normal user navigation */}
+        {/* Normal User Navigation*/}
         {token && !isAdmin && (
           <>
             <Link to="/dashboard">Dashboard</Link>
-            <Link to="/jobs">Browse Jobs</Link>
-            <Link to="/my-jobs">My Jobs</Link>
-            <Link to="/post">Post Job</Link>
 
-            <button className="logout-btn" onClick={logout}>
+            <Link to="/jobs">
+              Browse Jobs
+            </Link>
+
+            <Link to="/my-jobs">
+              My Jobs
+            </Link>
+
+            <Link to="/post">
+              Post Job
+            </Link>
+
+            <button
+              className="logout-btn"
+              onClick={logout}
+            >
               Logout
             </button>
           </>
         )}
 
-        {/* Admin  Navidation */}
+        {/*Admin Navigation */}
         {token && isAdmin && (
           <>
-            <Link to="/admin">Admin Panel</Link>
-            <Link to="/admin/users">Users</Link>
-            <Link to="/admin/jobs">Jobs</Link>
-            <button className="logout-btn" onClick={logout}>
+            <Link to="/admin">
+              Admin Panel
+            </Link>
+
+            <Link to="/admin/users">
+              Users
+            </Link>
+
+            <Link to="/admin/jobs">
+              Jobs
+            </Link>
+
+            <button
+              className="logout-btn"
+              onClick={logout}
+            >
               Logout
             </button>
           </>
         )}
+
       </div>
-    </div>
+
+    </nav>
   );
 }
 

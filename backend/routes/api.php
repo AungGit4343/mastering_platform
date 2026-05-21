@@ -14,6 +14,7 @@ use App\Http\Controllers\ReviewController;
     // Logged-in user routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
+    Route::put('/profile', [AuthController::class, 'updateProfile']);
 
     // Job routes
     Route::get('/jobs', [JobController::class, 'index']);
