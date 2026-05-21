@@ -7,11 +7,15 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ReviewController;
 
 
-    // Public auth routes
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login', [AuthController::class, 'login']);
+// Public auth routes
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
-    // Logged-in user routes
+// Leaderboard and public profile routes
+Route::get('/leaderboard', [ReviewController::class, 'leaderboard']);
+Route::get('/users/{id}/public-profile', [ReviewController::class, 'publicProfile']);
+
+// Logged-in user routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::put('/profile', [AuthController::class, 'updateProfile']);

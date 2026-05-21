@@ -681,7 +681,16 @@ input:disabled {
 .crop-modal {
   max-width: 520px;
 }
+/* CLICKABLE LEADERBOARD ROWS */
 
+.clickable-row {
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.clickable-row:hover {
+  background: #dfe2e6;
+}
 .crop-container {
   position: relative;
   width: 100%;

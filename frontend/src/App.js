@@ -14,6 +14,9 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminUsers from "./pages/AdminUsers";
 import AdminJobs from "./pages/AdminJobs";
 
+import Leaderboard from "./pages/Leaderboard";
+import PublicProfile from "./pages/PublicProfile";
+
 import "./styles/main.css";
 
 function AppContent() {
@@ -43,6 +46,11 @@ function AppContent() {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/jobs" element={<AdminJobs />} />
+
+        {/* Public profile and leaderboard */}
+        <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/users/:id" element={<PublicProfile />} />
+
       </Routes>
     </>
   );

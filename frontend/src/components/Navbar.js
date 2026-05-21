@@ -11,7 +11,7 @@ function Navbar() {
   const isAdmin = localStorage.getItem("is_admin") === "true";
 
   // Logout current user
- 
+
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("is_admin");
@@ -24,7 +24,7 @@ function Navbar() {
   return (
 
     // Main Navbar
-    
+
     <nav className="navbar">
 
       {/* Website Logo + Brand*/}
@@ -60,6 +60,7 @@ function Navbar() {
         {!token && (
           <>
             <Link to="/">Home</Link>
+            <Link to="/leaderboard">Leaderboard</Link>
             <Link to="/login">Login</Link>
             <Link to="/register">Register</Link>
           </>
@@ -81,6 +82,9 @@ function Navbar() {
             <Link to="/post">
               Post Job
             </Link>
+
+            <Link to="/leaderboard">
+              Leaderboard</Link>
 
             <button
               className="logout-btn"
