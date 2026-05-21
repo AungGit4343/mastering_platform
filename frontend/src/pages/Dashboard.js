@@ -1,12 +1,23 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api";
+import Cropper from "react-easy-crop";
+import getCroppedImg from "../utils/cropImage";
 
 function Dashboard() {
   const [user, setUser] = useState(null);
 
   const [showEditModal, setShowEditModal] = useState(false);
 
+  // Profile photo crop states
+  const [photo, setPhoto] = useState(null);
+  const [imageSrc, setImageSrc] = useState(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [showCropModal, setShowCropModal] = useState(false);
+
+  // Email and password states for edit profile form
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
@@ -43,12 +54,69 @@ function Dashboard() {
     setPasswordConfirmation("");
   };
 
+
+  // When user selects image, open crop modal
+  const handlePhotoSelect = (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      setImageSrc(reader.result);
+      setShowCropModal(true);
+    };
+
+    reader.readAsDataURL(file);
+  };
+
+
+  // Save cropped image as uploadable file
+  const saveCroppedImage = async () => {
+    try {
+      const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
+
+      const croppedFile = new File(
+        [croppedBlob],
+        "profile-photo.jpg",
+        { type: "image/jpeg" }
+      );
+
+      setPhoto(croppedFile);
+      setShowCropModal(false);
+    } catch (err) {
+      console.error(err);
+      alert("Image crop failed");
+    }
+  };
+
+  // Update profile with email/password/photo
+  // Uses FormData because photo is a file
+
   const updateProfile = async () => {
     try {
-      await api.put("/profile", {
-        email,
-        password: password || undefined,
-        password_confirmation: passwordConfirmation || undefined,
+      const formData = new FormData();
+
+      // Add editable fields
+      formData.append("email", email);
+
+      // Add password only if user entered it
+      if (password) {
+        formData.append("password", password);
+        formData.append("password_confirmation", passwordConfirmation);
+      }
+
+      // Add Cropped Photo only if user selected one
+      if (photo) {
+        formData.append("photo", photo);
+      }
+
+      // Laravel accepts PUT through method spoofing with FormData
+      await api.post("/profile?_method=PUT", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       alert("Profile updated!");
@@ -78,8 +146,17 @@ function Dashboard() {
     <div className="container">
       <div className="dashboard-grid">
         <div className="profile-card">
+          {/* User profile photo or first letter fallback */}
           <div className="avatar">
-            {user.name ? user.name.charAt(0).toUpperCase() : "U"}
+            {user.profile_photo ? (
+              <img
+                src={`http://localhost:8000/storage/${user.profile_photo}`}
+                alt="Profile"
+                className="avatar-image"
+              />
+            ) : (
+              user.name ? user.name.charAt(0).toUpperCase() : "U"
+            )}
           </div>
 
           <h2>{user.name}</h2>
@@ -131,6 +208,20 @@ function Dashboard() {
               onChange={(e) => setEmail(e.target.value)}
             />
 
+            <label>Profile Photo</label>
+
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoSelect}
+            />
+
+            {photo && (
+              <p className="small">
+                Cropped photo ready to upload.
+              </p>
+            )}
+
             <label>New Password</label>
             <input
               type="password"
@@ -150,6 +241,52 @@ function Dashboard() {
             <button onClick={updateProfile}>Save Profile</button>
 
             <button className="cancel-btn" onClick={closeEditModal}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Crop Profile Photo Modal */}
+      {showCropModal && (
+        <div className="modal-overlay">
+          <div className="modal-card crop-modal">
+            <h2>Crop Profile Photo</h2>
+
+            <div className="crop-container">
+              <Cropper
+                image={imageSrc}
+                crop={crop}
+                zoom={zoom}
+                aspect={1}
+                cropShape="round"
+                showGrid={false}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={(croppedArea, croppedPixels) =>
+                  setCroppedAreaPixels(croppedPixels)
+                }
+              />
+            </div>
+
+            <label>Zoom</label>
+            <input
+              type="range"
+              min={1}
+              max={3}
+              step={0.1}
+              value={zoom}
+              onChange={(e) => setZoom(e.target.value)}
+            />
+
+            <button onClick={saveCroppedImage}>
+              Use Cropped Photo
+            </button>
+
+            <button
+              className="cancel-btn"
+              onClick={() => setShowCropModal(false)}
+            >
               Cancel
             </button>
           </div>

@@ -75,16 +75,25 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
+        // Validate editable user fields
         $request->validate([
             'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|min:6|confirmed',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
         ]);
 
-        // Name/username is intentionally NOT editable
+        // Username/name is intentionally locked
         $user->email = $request->email;
 
+        // Update password only if user entered one
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
+        }
+
+        // Upload profile photo if selected
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('profiles', 'public');
+            $user->profile_photo = $path;
         }
 
         $user->save();
