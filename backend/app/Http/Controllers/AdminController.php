@@ -25,7 +25,9 @@ class AdminController extends Controller
     public function users()
     {
         return response()->json(
-            User::select('id', 'name', 'email', 'points', 'is_admin', 'created_at')->get()
+            User::where('is_admin', false) //exclude admins
+            ->select('id', 'name', 'email', 'points', 'is_admin', 'created_at')
+            ->get()
         );
     }
 
@@ -58,6 +60,15 @@ class AdminController extends Controller
             ]);
 
             $user->password = Hash::make($request->password);
+        }
+
+        $user = User::findOrFail($id);
+        
+        //Prevent Updating Admin
+        if ($user->is_admin) {
+            return response()->json([
+                'message' => 'You cannot modify admin users.'
+            ], 403);
         }
 
         // Add or subtract user points

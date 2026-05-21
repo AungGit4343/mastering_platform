@@ -10,20 +10,23 @@ function Navbar() {
     localStorage.removeItem("token");
     localStorage.removeItem("is_admin");
     localStorage.removeItem("user_name");
-    window.location.href = "/";
+    window.location.href = "/login";
   };
 
   return (
     <div className="navbar">
       <div className="nav-left">
-        <h2 className="brand">SecondEars</h2>
+        <Link to="/" className="brand-link">
+          <h2 className="brand">SecondEars</h2>
+        </Link>
       </div>
 
       <div className="nav-right">
         {/* Not logged in */}
         {!token && (
           <>
-            <Link to="/">Login</Link>
+            <Link to="/">Home</Link>
+            <Link to="/login">Login</Link>
             <Link to="/register">Register</Link>
           </>
         )}

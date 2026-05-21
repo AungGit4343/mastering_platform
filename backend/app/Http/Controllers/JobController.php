@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Job;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class JobController extends Controller
@@ -19,15 +19,21 @@ class JobController extends Controller
             ->get();
     }
 
-    // Create a new job
+    // Create a new job with one audio file
     public function store(Request $request)
     {
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'reward' => 'required|integer|min:1',
-            'audio' => 'required|file|mimes:mp3,wav|max:102400'
+            'audio' => 'required|file|mimes:mp3,wav|max:102400',
         ]);
+
+        $path = null;
+
+        if ($request->hasFile('audio')) {
+            $path = $request->file('audio')->store('jobs', 'public');
+        }
 
         return Job::create([
             'title' => $request->title,
@@ -39,22 +45,44 @@ class JobController extends Controller
         ]);
     }
 
+    // Delete a job only if the logged-in user owns it and it is still open
+    public function destroy($id)
+    {
+        $job = Job::findOrFail($id);
+
+        if ($job->client_id !== Auth::id()) {
+            return response()->json([
+                'message' => 'Not authorized',
+            ], 403);
+        }
+
+        if ($job->status !== 'open') {
+            return response()->json([
+                'message' => 'Cannot delete job after it is accepted',
+            ], 400);
+        }
+
+        $job->delete();
+
+        return response()->json([
+            'message' => 'Job deleted successfully',
+        ]);
+    }
+
     // Accept a job
     public function accept($id)
     {
         $job = Job::findOrFail($id);
 
-        // User cannot accept their own posted job
         if ($job->client_id === Auth::id()) {
             return response()->json([
-                'message' => 'You cannot accept your own job.'
+                'message' => 'You cannot accept your own job.',
             ], 403);
         }
 
-        // Only open jobs can be accepted
         if ($job->status !== 'open') {
             return response()->json([
-                'message' => 'This job is no longer available.'
+                'message' => 'This job is no longer available.',
             ], 400);
         }
 
@@ -65,40 +93,35 @@ class JobController extends Controller
         return response()->json($job);
     }
 
-    // Complete job and transfer points
+    // Complete job and transfer points from client to engineer
     public function complete($id)
     {
         $job = Job::with(['client', 'engineer'])->findOrFail($id);
 
-        // Only client can complete their posted job
         if ($job->client_id !== Auth::id()) {
             return response()->json([
-                'message' => 'Only the client can complete this job.'
+                'message' => 'Only the client can complete this job.',
             ], 403);
         }
 
-        // Only in-progress jobs can be completed
         if ($job->status !== 'in_progress') {
             return response()->json([
-                'message' => 'Only in-progress jobs can be completed.'
+                'message' => 'Only in-progress jobs can be completed.',
             ], 400);
         }
 
-        // Job must have an engineer
         if (!$job->engineer) {
             return response()->json([
-                'message' => 'No engineer assigned to this job.'
+                'message' => 'No engineer assigned to this job.',
             ], 400);
         }
 
-        // Client must have enough points
         if ($job->client->points < $job->reward) {
             return response()->json([
-                'message' => 'Client does not have enough points.'
+                'message' => 'Client does not have enough points.',
             ], 400);
         }
 
-        // Safe database transaction for point transfer
         DB::transaction(function () use ($job) {
             $job->client->points -= $job->reward;
             $job->engineer->points += $job->reward;
@@ -134,21 +157,25 @@ class JobController extends Controller
             ->get();
     }
 
-    //Audio File Submission
+    // Engineer submits completed audio file
     public function submit($id, Request $request)
-{
+    {
         $job = Job::findOrFail($id);
 
-        if ($job->engineer_id !== auth()->id()) {
-            return response()->json(['message' => 'Not authorized'], 403);
+        if ($job->engineer_id !== Auth::id()) {
+            return response()->json([
+                'message' => 'Not authorized',
+            ], 403);
         }
 
         if ($job->status !== 'in_progress') {
-            return response()->json(['message' => 'Job not in progress'], 400);
+            return response()->json([
+                'message' => 'Job not in progress',
+            ], 400);
         }
 
         $request->validate([
-            'audio' => 'required|file|mimes:mp3,wav|max:10240'
+            'audio' => 'required|file|mimes:mp3,wav|max:102400',
         ]);
 
         $path = $request->file('audio')->store('submissions', 'public');
@@ -158,7 +185,7 @@ class JobController extends Controller
 
         return response()->json([
             'message' => 'Audio submitted',
-            'job' => $job
+            'job' => $job,
         ]);
     }
 }

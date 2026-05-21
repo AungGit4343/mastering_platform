@@ -20,8 +20,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/jobs/{id}/complete', [JobController::class, 'complete']);
 
     // My jobs routes
+    Route::delete('/jobs/{id}', [JobController::class, 'destroy']);
+    
     Route::get('/my-posted-jobs', [JobController::class, 'myPostedJobs']);
     Route::get('/my-accepted-jobs', [JobController::class, 'myAcceptedJobs']);
+
+     // Audio Submit 
+    Route::post('/jobs/{id}/submit', [JobController::class, 'submit']);
 });
 
 // Admin-only routes
@@ -34,6 +39,4 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     // Admin updates user password and points
     Route::put('/users/{id}', [AdminController::class, 'updateUser']);
 
-    // Audio Submit 
-    Route::post('/jobs/{id}/submit', [JobController::class, 'submit']);
 });

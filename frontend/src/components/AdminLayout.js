@@ -7,7 +7,7 @@ function AdminLayout({ children }) {
     localStorage.removeItem("token");
     localStorage.removeItem("is_admin");
     localStorage.removeItem("user_name");
-    window.location.href = "/";
+    window.location.href = "/login";
   };
 
   return (
