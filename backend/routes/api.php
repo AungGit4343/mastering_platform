@@ -43,7 +43,8 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('/users', [AdminController::class, 'users']);
     Route::get('/jobs', [AdminController::class, 'jobs']);
     Route::delete('/jobs/{id}', [AdminController::class, 'deleteJob']);
-
+    Route::delete('/users/{id}', [AdminController::class, 'deleteUser']);
+    
     // Admin updates user password and points
     Route::put('/users/{id}', [AdminController::class, 'updateUser']);
 });

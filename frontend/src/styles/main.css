@@ -209,7 +209,8 @@ button:hover {
   height: 90px;
   margin: 0 auto 16px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1a1a1a, #2d2f34, #4b1d1d);;
+  background: linear-gradient(135deg, #1a1a1a, #2d2f34, #4b1d1d);
+  ;
   color: white;
   display: flex;
   align-items: center;
@@ -681,6 +682,7 @@ input:disabled {
 .crop-modal {
   max-width: 520px;
 }
+
 /* CLICKABLE LEADERBOARD ROWS */
 
 .clickable-row {
@@ -691,6 +693,7 @@ input:disabled {
 .clickable-row:hover {
   background: #dfe2e6;
 }
+
 .crop-container {
   position: relative;
   width: 100%;
@@ -741,4 +744,40 @@ input:disabled {
 
 .search-input {
   margin-bottom: 10px;
+}
+
+/* ADMIN ACTION BUTTONS */
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-buttons button {
+  width: auto;
+  margin-top: 0;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.edit-btn {
+  background: #c5161d;
+}
+
+.edit-btn:hover {
+  background: #a91218;
+}
+
+.delete-btn {
+  background: #dc2626;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-left: 0;
+}
+
+.delete-btn:hover {
+  background: #b91c1c;
 }

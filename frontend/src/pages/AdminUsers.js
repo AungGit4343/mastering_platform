@@ -4,23 +4,20 @@ import api from "../api";
 import AdminLayout from "../components/AdminLayout";
 
 function AdminUsers() {
-  // Stores all users from backend
   const [users, setUsers] = useState([]);
 
-  // Stores selected user for popup editing
   const [editingUser, setEditingUser] = useState(null);
 
-  // Points adjustment states
   const [pointsAction, setPointsAction] = useState("add");
   const [pointsAmount, setPointsAmount] = useState("");
 
-  // Password reset states
   const [newPassword, setNewPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   // Load users from backend
   const loadUsers = () => {
-    api.get("/admin/users")
+    api
+      .get("/admin/users")
       .then((res) => setUsers(res.data))
       .catch((err) => {
         console.error(err);
@@ -28,18 +25,46 @@ function AdminUsers() {
       });
   };
 
-  // Load users when page opens
   useEffect(() => {
     loadUsers();
   }, []);
 
-  // Close modal and reset fields
+  // Close edit modal
   const closeModal = () => {
     setEditingUser(null);
     setPointsAmount("");
     setPointsAction("add");
     setNewPassword("");
     setShowPassword(false);
+  };
+
+  // Open edit modal
+  const openEditModal = (user) => {
+    setEditingUser(user);
+    setPointsAmount("");
+    setPointsAction("add");
+    setNewPassword("");
+    setShowPassword(false);
+  };
+
+  // Delete user
+  const deleteUser = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to permanently delete this user?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await api.delete(`/admin/users/${id}`);
+
+      alert("User deleted successfully");
+
+      setUsers(users.filter((user) => user.id !== id));
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Failed to delete user");
+    }
   };
 
   // Save user update: points and/or password
@@ -69,7 +94,6 @@ function AdminUsers() {
     <AdminLayout>
       <h1>Manage Users</h1>
 
-      {/* Users table */}
       <div className="card">
         <table className="admin-table">
           <thead>
@@ -93,12 +117,21 @@ function AdminUsers() {
                 <td>{user.is_admin ? "Yes" : "No"}</td>
 
                 <td>
-                  <button
-                    className="small-btn"
-                    onClick={() => setEditingUser(user)}
-                  >
-                    Edit
-                  </button>
+                  <div className="action-buttons">
+                    <button
+                      onClick={() => openEditModal(user)}
+                      className="edit-btn"
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      onClick={() => deleteUser(user.id)}
+                      className="delete-btn"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -106,7 +139,6 @@ function AdminUsers() {
         </table>
       </div>
 
-      {/* Edit user popup modal */}
       {editingUser && (
         <div className="modal-overlay">
           <div className="modal-card">
@@ -116,7 +148,6 @@ function AdminUsers() {
               Editing <strong>{editingUser.name}</strong>
             </p>
 
-            {/* Points change section */}
             <label>Points Change</label>
 
             <div className="points-control">
@@ -136,7 +167,6 @@ function AdminUsers() {
               />
             </div>
 
-            {/* Password change section */}
             <label>Password Change</label>
 
             <div className="password-field">
@@ -155,7 +185,6 @@ function AdminUsers() {
               </span>
             </div>
 
-            {/* Save and cancel buttons */}
             <button onClick={saveChanges}>Save Changes</button>
 
             <button className="cancel-btn" onClick={closeModal}>

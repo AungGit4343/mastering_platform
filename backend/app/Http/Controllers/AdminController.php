@@ -26,8 +26,8 @@ class AdminController extends Controller
     {
         return response()->json(
             User::where('is_admin', false) //exclude admins
-            ->select('id', 'name', 'email', 'points', 'is_admin', 'created_at')
-            ->get()
+                ->select('id', 'name', 'email', 'points', 'is_admin', 'created_at')
+                ->get()
         );
     }
 
@@ -63,7 +63,7 @@ class AdminController extends Controller
         }
 
         $user = User::findOrFail($id);
-        
+
         //Prevent Updating Admin
         if ($user->is_admin) {
             return response()->json([
@@ -86,6 +86,47 @@ class AdminController extends Controller
         return response()->json([
             'message' => 'User updated successfully',
             'user' => $user,
+        ]);
+    }
+
+    // Delete a user from admin panel
+
+    public function deleteUser($id)
+    {
+        $admin = auth()->user();
+
+        // Only admin can delete users
+        if (!$admin || !$admin->is_admin) {
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], 403);
+        }
+
+        // Prevent admin deleting themselves
+        if ($admin->id == $id) {
+            return response()->json([
+                'message' => 'You cannot delete your own admin account'
+            ], 400);
+        }
+
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        // Optional: delete jobs created by this user or accepted by this user
+        Job::where('client_id', $user->id)
+            ->orWhere('engineer_id', $user->id)
+            ->delete();
+
+        // Delete user completely
+        $user->delete();
+
+        return response()->json([
+            'message' => 'User deleted successfully'
         ]);
     }
 }

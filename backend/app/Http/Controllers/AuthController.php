@@ -29,7 +29,9 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'points' => 0,
+
+            // Reward new users with points to encourage engagement
+            'points' => 100,
             'is_admin' => false,
 
             // Save required profile details
